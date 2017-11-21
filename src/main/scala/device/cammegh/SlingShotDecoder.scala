@@ -5,7 +5,7 @@ import scodec.bits.BitVector
 import scodec.{Attempt, DecodeResult, Decoder, Err}
 
 /**
-  * `USPC Bee Tek Electronic Shoe` codec implementation.
+  * `Cammegh SlingShot2 Roulette Wheel` codec implementation.
   */
 object SlingShotDecoder extends Decoder[Input] {
 

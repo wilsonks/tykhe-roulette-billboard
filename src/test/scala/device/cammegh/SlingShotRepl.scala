@@ -10,7 +10,7 @@ import monix.reactive.Observable
 import scala.concurrent.duration._
 
 /**
-  * REPL to test `USPC Bee Tek Electronic Shoe` protocol.
+  * REPL to test `Cammegh SlingShot2 Roulette Wheel` protocol.
   */
 object SlingShotRepl extends App {
 
