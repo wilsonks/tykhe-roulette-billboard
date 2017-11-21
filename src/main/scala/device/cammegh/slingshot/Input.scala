@@ -134,14 +134,15 @@ object Status {
     (";".hex ~> ("wheel-direction" | Direction.codec) <~ "\r\n".hex)).as[Status]
 }
 
+
 object Win {
-  val codec: Codec[Win] = "win-num" | fixedSizeBytes(2, ascii).as[Win]
+  val codec: Codec[Win] = (("win-num" | fixedSizeBytes(2, ascii) <~ "\n\r".hex)).as[Win]
 }
+
 
 object Input {
 
   val codec: Codec[Input] = "input" | oneOf[Input](
     Status.codec.upcast[Input],
-    BonusWin.codec.upcast[Input],
     Win.codec.upcast[Input])
 }
