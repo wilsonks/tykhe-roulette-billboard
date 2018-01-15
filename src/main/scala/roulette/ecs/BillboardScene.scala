@@ -124,6 +124,9 @@ class BillboardScene(seed: State) extends Scene[Event, State]("billboard1") {
 
     spinResults.trigger {
 
+      //Forward new state to UI
+      writer.onNext(state.now)
+
       hot.map(m => m.zipWithIndex
         .foreach {
           case ((x, y), z) => {
