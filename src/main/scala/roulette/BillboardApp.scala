@@ -11,13 +11,13 @@ import device.io.usb.Pl2303
 import display.io.WindowConfig
 import monix.execution.Scheduler
 import monix.execution.schedulers.SchedulerService
-//import monix.reactive.Observable
+import monix.reactive.Observable
 import pureconfig._
 import roulette.State.Running
 import roulette.ecs.{BillboardScene, BillboardSceneRB}
-//import scodec.bits.ByteVector
-//
-//import scala.concurrent.duration._
+import scodec.bits.ByteVector
+
+import scala.concurrent.duration._
 
 object BillboardApp extends App {
 
@@ -53,12 +53,13 @@ object BillboardApp extends App {
         case util.Success(dp) =>
           val (scene, ui) = dp.unicast
 
-//          val device = Observable.interval(10.seconds)
-//            .map { _ => (math.random() * 37).toInt }
-//            .debug("number")
-//            .map { s => (" " + s).takeRight(2) }
-//            .map(s => ByteVector(s.toCharArray.map(_.toByte)).bits)
-//            .debug("bits")
+          val device = Observable.interval(10.seconds)
+            .map { _ => (math.random() * 37).toInt }
+            .debug("number")
+            .map { s => (" " + s).takeRight(2) }
+            .map {s => s + "\n\r"}
+            .map(s => ByteVector(s.toCharArray.map(_.toByte)).bits)
+            .debug("bits")
 
           hub.scan(Pl2303).foreach {
             case DeviceAttached(port) =>
@@ -74,11 +75,11 @@ object BillboardApp extends App {
               println(s"$port detached")
           }
 
-//          device.decode(Input.codec)
-//            .debug("protocol")
-//            .collect {
-//              case Win(num) => Event.SpinCompleted(num)
-//            }.foreach(scene.onNext)
+          device.decode(Input.codec)
+            .debug("protocol")
+            .collect {
+              case Win(num) => Event.SpinCompleted(num)
+            }.foreach(scene.onNext)
 
 
           // latch gate is open when ui thread on complete.

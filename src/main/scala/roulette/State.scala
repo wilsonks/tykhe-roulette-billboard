@@ -34,20 +34,6 @@ object State {
 
   }
 
-  //
-  //  case class Booting(name: String, history: Seq[String], maxSpinCount: Int, min: Int, max: Int) extends State {
-  //    def transition: Transition = {
-  //      case NameChanged(next) => copy(name = next)
-  //      case MaxChanged(next) => copy(max = next)
-  //      case MinChanged(next) => copy(min = next)
-  //      case MaxSpinChanged(next) => copy(maxSpinCount = next)
-  //      case FileReadCompleted => Running(name, history, maxSpinCount, min, max)
-  //      case _ => copy()
-  //    }
-  //
-  //  }
-
-
 }
 
 sealed trait Event extends Product with Serializable

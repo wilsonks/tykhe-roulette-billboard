@@ -122,7 +122,11 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
     }
 
     spinResults.trigger {
-      //      println(state.now)
+
+      //Forward new state to UI
+      writer.onNext(state.now)
+
+      //Update LastWin Label
       updateEntity(scene.root / "lastWinNumber", lastWinNumber.now, getColor(lastWinNumber.now))
 
       (scene.root / "red").dimensions.width = red.now.toFloat
