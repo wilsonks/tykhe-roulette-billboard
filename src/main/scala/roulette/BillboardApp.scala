@@ -37,7 +37,7 @@ object BillboardApp extends App {
     databaseFile.readDeserialized[Running]
   } else {
     databaseFile.createIfNotExists(asDirectory = false, createParents = true)
-    databaseFile.writeSerialized(Running("EU01", Seq.empty[String], 100, 1000, 100000))
+    databaseFile.writeSerialized(Running("EU01", Seq.empty[String], 100, 1000, 100000,2))
     databaseFile.readDeserialized[Running]
   }
 
@@ -47,19 +47,30 @@ object BillboardApp extends App {
     case _ => BillboardScene(seed)
   }
 
+  val testFile = File(conf.getString("test.file"))
+  val scan1 = testFile.newScanner()
+
+  //Test Device  - MINCOM content
+  val testDevice1 = Observable.interval(500.milliseconds)
+    .map { _ =>  scan1.nextLine()}
+    .map(s => ByteVector(s.toCharArray.map(_.toByte)).bits)
+    .debug("bits")
+
+  //Test Device  - Random Win Number
+  val testDevice = Observable.interval(10.seconds)
+    .map { _ => (math.random() * 37).toInt }
+    .debug("number")
+    .map { s => (" " + s).takeRight(2) }
+    .map {s => s + "\n\r"}
+    .map(s => ByteVector(s.toCharArray.map(_.toByte)).bits)
+    .debug("bits")
+
   device.io.usb.Hub() match {
     case util.Success(hub) =>
       display.io.desktop.open(window -> config).runAsync.onComplete {
         case util.Success(dp) =>
           val (scene, ui) = dp.unicast
 
-          val device = Observable.interval(10.seconds)
-            .map { _ => (math.random() * 37).toInt }
-            .debug("number")
-            .map { s => (" " + s).takeRight(2) }
-            .map {s => s + "\n\r"}
-            .map(s => ByteVector(s.toCharArray.map(_.toByte)).bits)
-            .debug("bits")
 
           hub.scan(Pl2303).foreach {
             case DeviceAttached(port) =>
@@ -75,10 +86,14 @@ object BillboardApp extends App {
               println(s"$port detached")
           }
 
-          device.decode(Input.codec)
+          testDevice1.decode(Input.codec)
             .debug("protocol")
             .collect {
               case Win(num) => Event.SpinCompleted(num)
+              case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(2)
+              case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(3)
+              case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(4)
+              case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(5)
             }.foreach(scene.onNext)
 
 

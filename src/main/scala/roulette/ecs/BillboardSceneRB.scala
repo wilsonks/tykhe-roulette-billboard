@@ -10,7 +10,7 @@ import monix.eval.Task
 import monix.execution.Cancelable
 import monix.execution.cancelables.SerialCancelable
 import monix.reactive.{Observable, Observer}
-import roulette.Event.SpinCompleted
+import roulette.Event.{SpinCompleted, StatusChanged}
 import roulette.{Event, State}
 import rx.{Ctx, Rx, Var}
 
@@ -30,6 +30,8 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
     val name = state.map(x => x.name)
     val min = state.map(x => x.min)
     val max = state.map(x => x.max)
+    val stage = state.map(x => x.stage)
+
     //Rx Level 1
     val lastWinNumber = spinResults.map(x => x.headOption.getOrElse(""))
     val spinHistory = spinResults.map(x => x.take(maxSpins()))
@@ -115,16 +117,19 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
     val effect = entity.tint.fade(0f, Interpolation.bounceOut, duration).doOnFinish(_ => Task.evalOnce(entity.tint.color.a = 1f))
 
     reader.foreach  {
+      case x: StatusChanged  =>
+        state() = state.now.transition(x)
       case e: SpinCompleted =>
         effect.runAsync
         Task.evalOnce(state() = state.now.transition(e)).delayExecution(duration).runAsync
       case _ =>
     }
 
-    spinResults.trigger {
+    //Forward new state to UI
+    writer.onNext(state.now)
 
-      //Forward new state to UI
-      writer.onNext(state.now)
+
+    spinResults.trigger {
 
       //Update LastWin Label
       updateEntity(scene.root / "lastWinNumber", lastWinNumber.now, getColor(lastWinNumber.now))
@@ -139,6 +144,45 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
       (scene.root / "green3").transform.x = position0 + oneTo18.now.toFloat
       (scene.root / "green3").dimensions.width = green.now.toFloat
 
+    }
+
+    stage.trigger {
+      
+      disableEntity(scene.root / "no-more-bets")
+      disableEntity(scene.root / "ball-in-rim")
+      disableEntity(scene.root / "place-your-bets")
+      disableEntity(scene.root / "wheel")
+      disableEntity(scene.root / "winning-number")
+      disableEntity(scene.root / "black-ball")
+      disableEntity(scene.root / "red-ball")
+      disableEntity(scene.root / "green-ball")
+      disableEntity(scene.root / "p1")
+      disableEntity(scene.root / "logo")
+
+      stage.now match {
+        case 2 => {
+          enableEntity(scene.root / "place-your-bets")
+          enableEntity(scene.root / "logo")
+          println("place-your-bets")
+        }
+        case 3 => {
+          enableEntity(scene.root / "ball-in-rim")
+          enableEntity(scene.root / "logo")
+          println("ball-in-rim")
+        }
+        case 4 => {
+          enableEntity(scene.root / "no-more-bets")
+          enableEntity(scene.root / "logo")
+          println("no-more-bets")
+        }
+        case 5 => {
+          enableEntity(scene.root / "winning-number")
+          enableEntity(scene.root / "p1")
+        }
+        case _ => {
+          println("What the hell...")
+        }
+      }
     }
 
     hot.map(m => m.zipWithIndex
@@ -284,6 +328,11 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
 
     def disableEntity(e: Entity): Unit = {
       e.item.visible = false
+
+    }
+
+    def enableEntity(e: Entity): Unit = {
+      e.item.visible = true
     }
 
     def updateEntity(e: Entity, x: String, col: Color): Unit = {
