@@ -23,7 +23,6 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
   override def bind(writer: Observer[State], reader: Observable[Event])(implicit scene: SceneContext): Unit = try {
     scene.loader.loadScene("MainScene")
 
-
     //Rx Level 0
     val spinResults = state.map(x => x.history)
     val maxSpins = state.map(x => x.maxSpinCount)
@@ -113,26 +112,39 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
     import display.ecs.fx._
     import scala.concurrent.duration._
     val duration = 3.seconds
-    val entity = scene.root / "lastWinNumber"
+    val entity = scene.root / "win.number"
     val effect = entity.tint.fade(0f, Interpolation.bounceOut, duration).doOnFinish(_ => Task.evalOnce(entity.tint.color.a = 1f))
 
     reader.foreach  {
       case x: StatusChanged  =>
         state() = state.now.transition(x)
       case e: SpinCompleted =>
+        enableEntity(scene.root / "win.number")
         effect.runAsync
         Task.evalOnce(state() = state.now.transition(e)).delayExecution(duration).runAsync
       case _ =>
     }
 
-    //Forward new state to UI
-    writer.onNext(state.now)
+
 
 
     spinResults.trigger {
 
+      //Forward new state to UI
+      writer.onNext(state.now)
+
       //Update LastWin Label
       updateEntity(scene.root / "lastWinNumber", lastWinNumber.now, getColor(lastWinNumber.now))
+
+      enableEntity(scene.root / "wheel")
+      getColor(lastWinNumber.now) match {
+        case Color.RED =>   enableEntity(scene.root / "red-ball")
+        case Color.BLACK => enableEntity(scene.root / "black-ball")
+        case Color.GREEN => enableEntity(scene.root / "green-ball")
+      }
+
+      (scene.root / "win").item.visible = true
+      (scene.root / "win").label.setText(lastWinNumber.now)
 
       (scene.root / "red").dimensions.width = red.now.toFloat
       (scene.root / "green1").transform.x = position0 + red.now.toFloat
@@ -147,7 +159,7 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
     }
 
     stage.trigger {
-      
+
       disableEntity(scene.root / "no-more-bets")
       disableEntity(scene.root / "ball-in-rim")
       disableEntity(scene.root / "place-your-bets")
@@ -158,30 +170,27 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
       disableEntity(scene.root / "green-ball")
       disableEntity(scene.root / "p1")
       disableEntity(scene.root / "logo")
+      disableEntity(scene.root / "win.number")
+      disableEntity(scene.root / "win")
 
       stage.now match {
         case 2 => {
           enableEntity(scene.root / "place-your-bets")
           enableEntity(scene.root / "logo")
-          println("place-your-bets")
         }
         case 3 => {
           enableEntity(scene.root / "ball-in-rim")
           enableEntity(scene.root / "logo")
-          println("ball-in-rim")
         }
         case 4 => {
           enableEntity(scene.root / "no-more-bets")
           enableEntity(scene.root / "logo")
-          println("no-more-bets")
         }
         case 5 => {
-          enableEntity(scene.root / "winning-number")
           enableEntity(scene.root / "p1")
+          enableEntity(scene.root / "win.number")
         }
-        case _ => {
-          println("What the hell...")
-        }
+        case _ =>
       }
     }
 
