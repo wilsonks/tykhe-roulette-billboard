@@ -15,7 +15,7 @@ import roulette.{Event, State}
 import rx.{Ctx, Rx, Var}
 import scala.concurrent.duration._
 
-class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme") {
+class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-base") {
 
   implicit def owner: Ctx.Owner = Ctx.Owner.Unsafe
 
@@ -135,7 +135,8 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme"
       //Update LastWin Label
       updateEntity(scene.root / "lastWinNumber", lastWinNumber.now, getColor(lastWinNumber.now))
 
-      enableEntity(scene.root / "wheel")
+      println(lastWinNumber.now)
+
       getColor(lastWinNumber.now) match {
         case Color.RED =>   enableEntity(scene.root / "red-ball")
         case Color.BLACK => enableEntity(scene.root / "black-ball")
@@ -162,7 +163,6 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme"
       disableEntity(scene.root / "no-more-bets")
       disableEntity(scene.root / "ball-in-rim")
       disableEntity(scene.root / "place-your-bets")
-      disableEntity(scene.root / "wheel")
       disableEntity(scene.root / "winning-number")
       disableEntity(scene.root / "black-ball")
       disableEntity(scene.root / "red-ball")
