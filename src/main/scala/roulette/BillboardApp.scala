@@ -80,7 +80,10 @@ object BillboardApp extends App {
                 .liftByOperator(debug[Input]("protocol"))
                 .collect {
                   case Win(num) => Event.SpinCompleted(num)
-//                  case Status(BallDetected,x,num,y,z,a) => Event.SpinCompleted(num)
+                  case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(2)
+                  case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(3)
+                  case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(4)
+                  case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(5)
                 }.unicast._2.foreach(scene.onNext)
             case DeviceDetached(port) =>
               println(s"$port detached")
@@ -97,8 +100,11 @@ object BillboardApp extends App {
             }.foreach(scene.onNext)
 
 
+          // UI loop
+          ui.foreach(s => databaseFile.writeSerialized(s))
+
           // latch gate is open when ui thread on complete.
-          ui.doOnTerminate(_ => latch.countDown()).foreach(s => databaseFile.writeSerialized(s))
+          ui.doOnTerminate(_ => latch.countDown())
 
         case util.Failure(ex) =>
           ex.printStackTrace()

@@ -13,8 +13,9 @@ import monix.reactive.{Observable, Observer}
 import roulette.Event.{SpinCompleted, StatusChanged}
 import roulette.{Event, State}
 import rx.{Ctx, Rx, Var}
+import scala.concurrent.duration._
 
-class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
+class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme") {
 
   implicit def owner: Ctx.Owner = Ctx.Owner.Unsafe
 
@@ -109,8 +110,7 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
     oneTo18Percentage.map(x => Rx(x).writes((scene.root / "oneTo18Percentage").label))
     nineteenTo36Percentage.map(x => Rx(x).writes((scene.root / "nineteenTo36Percentage").label))
 
-    import display.ecs.fx._
-    import scala.concurrent.duration._
+
     val duration = 3.seconds
     val entity = scene.root / "win.number"
     val effect = entity.tint.fade(0f, Interpolation.bounceOut, duration).doOnFinish(_ => Task.evalOnce(entity.tint.color.a = 1f))
@@ -126,11 +126,10 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("billboard2") {
     }
 
 
-
-
+    //Change in spinResults
     spinResults.trigger {
 
-      //Forward new state to UI
+      //Forward state to UI thread, So that DB gets updated
       writer.onNext(state.now)
 
       //Update LastWin Label
