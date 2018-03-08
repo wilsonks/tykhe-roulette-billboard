@@ -3,6 +3,7 @@ package roulette.ecs
 import com.badlogic.ashley.core.Entity
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Interpolation
+import device.cammegh.slingshot.{BallDetected, BallInRim, NoMoreBets, PlaceYourBets}
 import display.ecs._
 import display.ecs.fx._
 import display.io._
@@ -13,9 +14,10 @@ import monix.reactive.{Observable, Observer}
 import roulette.Event.{SpinCompleted, StatusChanged}
 import roulette.{Event, State}
 import rx.{Ctx, Rx, Var}
+
 import scala.concurrent.duration._
 
-class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-base") {
+class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-light") {
 
   implicit def owner: Ctx.Owner = Ctx.Owner.Unsafe
 
@@ -110,18 +112,34 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-
     oneTo18Percentage.map(x => Rx(x).writes((scene.root / "oneTo18Percentage").label))
     nineteenTo36Percentage.map(x => Rx(x).writes((scene.root / "nineteenTo36Percentage").label))
 
-
     val duration = 3.seconds
-    val entity = scene.root / "win.number"
-    val effect = entity.tint.fade(0f, Interpolation.bounceOut, duration).doOnFinish(_ => Task.evalOnce(entity.tint.color.a = 1f))
+    val winEntity = scene.root / "win.number"
+    val winEffect = winEntity.tint.fade(0f, Interpolation.bounceOut, duration).doOnFinish(_ => Task.evalOnce(winEntity.tint.color.a = 1f))
 
+    //Reader(scene) Main Loop
     reader.foreach  {
-      case x: StatusChanged  =>
-        state() = state.now.transition(x)
-      case e: SpinCompleted =>
+      case e: StatusChanged  => {
+        e.value  match {
+          case PlaceYourBets => {
+            (scene.root / "bg").tint.color.sub(Color.valueOf("00040400"))
+            state() = state.now.transition(e)
+          }
+
+          case BallInRim => {
+            (scene.root / "bg").tint.color.sub(Color.valueOf("00040400"))
+            state() = state.now.transition(e)
+          }
+
+          case _ => {
+            state() = state.now.transition(e)
+          }
+        }
+      }
+      case e: SpinCompleted => {
         enableEntity(scene.root / "win.number")
-        effect.runAsync
+        winEffect.runAsync
         Task.evalOnce(state() = state.now.transition(e)).delayExecution(duration).runAsync
+      }
       case _ =>
     }
 
@@ -135,7 +153,6 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-
       //Update LastWin Label
       updateEntity(scene.root / "lastWinNumber", lastWinNumber.now, getColor(lastWinNumber.now))
 
-      println(lastWinNumber.now)
 
       getColor(lastWinNumber.now) match {
         case Color.RED =>   enableEntity(scene.root / "red-ball")
@@ -173,21 +190,24 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-
       disableEntity(scene.root / "win")
 
       stage.now match {
-        case 2 => {
+        case PlaceYourBets => {
+          (scene.root / "place-your-bets").tint.color = Color.WHITE
           enableEntity(scene.root / "place-your-bets")
           enableEntity(scene.root / "logo")
         }
-        case 3 => {
+        case BallInRim => {
+          (scene.root / "ball-in-rim").tint.color = Color.WHITE
           enableEntity(scene.root / "ball-in-rim")
           enableEntity(scene.root / "logo")
         }
-        case 4 => {
+        case NoMoreBets => {
           enableEntity(scene.root / "no-more-bets")
           enableEntity(scene.root / "logo")
         }
-        case 5 => {
+        case BallDetected => {
           enableEntity(scene.root / "p1")
           enableEntity(scene.root / "win.number")
+          (scene.root / "bg").tint.color.add(Color.valueOf("00ffff00"))
         }
         case _ =>
       }

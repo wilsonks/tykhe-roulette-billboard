@@ -1,5 +1,6 @@
 package roulette
 
+import device.cammegh.slingshot.{WheelState}
 import roulette.Event._
 
 
@@ -16,7 +17,7 @@ sealed trait State extends Product with Serializable {
 
   def max: Int
 
-  def stage: Int
+  def stage: WheelState
 
   def transition: Transition
 }
@@ -24,7 +25,7 @@ sealed trait State extends Product with Serializable {
 
 object State {
 
-  case class Running(name: String, history: Seq[String], maxSpinCount: Int, min: Int, max: Int, stage: Int) extends State {
+  case class Running(name: String, history: Seq[String], maxSpinCount: Int, min: Int, max: Int, stage: WheelState) extends State {
     def transition: Transition = {
       case SpinCompleted(num) => copy(history = (num +: history).take(maxSpinCount))
       case NameChanged(next) => copy(name = next)
@@ -53,6 +54,6 @@ object Event {
 
   case class MaxSpinChanged(value: Int) extends Event
 
-  case class StatusChanged(value: Int) extends Event
+  case class StatusChanged(value: WheelState) extends Event
 
 }

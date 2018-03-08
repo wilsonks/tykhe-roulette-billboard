@@ -15,7 +15,7 @@ case class Win(number: String) extends Input
 case class BonusWin(bonusType: BonusType,
                     winNumber: String) extends Input
 
-case class Status(state: State,
+case class Status(state: WheelState,
                   spinCount: Int,
                   winNum: String,
                   warning: Warning,
@@ -101,22 +101,22 @@ object Warning {
 
 }
 
-sealed trait State
+sealed trait WheelState
 
-case object WheelStart extends State
+case object WheelStart extends WheelState
 
-case object PlaceYourBets extends State
+case object PlaceYourBets extends WheelState
 
-case object BallInRim extends State
+case object BallInRim extends WheelState
 
-case object NoMoreBets extends State
+case object NoMoreBets extends WheelState
 
-case object BallDetected extends State
+case object BallDetected extends WheelState
 
-case object TurnedIdle extends State
+case object TurnedIdle extends WheelState
 
-object State {
-  val codec: Codec[State] = "wheel-state" | mappedEnum[State, String](fixedSizeBytes(1, ascii),
+object WheelState {
+  val codec: Codec[WheelState] = "wheel-state" | mappedEnum[WheelState, String](fixedSizeBytes(1, ascii),
     WheelStart -> "1",
     PlaceYourBets -> "2",
     BallInRim -> "3",
@@ -126,7 +126,7 @@ object State {
 }
 
 object Status {
-  val codec: Codec[Status] = "status" | "*X;".hex ~> (State.codec ::
+  val codec: Codec[Status] = "status" | "*X;".hex ~> (WheelState.codec ::
     (";".hex ~> ("spin-num" | fixedSizeBytes(3, ascii).toInt)) ::
     (";".hex ~> ("win-num" | fixedSizeBytes(2, ascii))) ::
     (";".hex ~> ("warning-flags" | Warning.codec)) ::

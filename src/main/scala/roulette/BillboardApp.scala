@@ -37,7 +37,7 @@ object BillboardApp extends App {
     databaseFile.readDeserialized[Running]
   } else {
     databaseFile.createIfNotExists(asDirectory = false, createParents = true)
-    databaseFile.writeSerialized(Running("EU01", Seq.empty[String], 100, 1000, 100000,2))
+    databaseFile.writeSerialized(Running("EU01", Seq.empty[String], 100, 1000, 100000,PlaceYourBets))
     databaseFile.readDeserialized[Running]
   }
 
@@ -80,10 +80,10 @@ object BillboardApp extends App {
                 .liftByOperator(debug[Input]("protocol"))
                 .collect {
                   case Win(num) => Event.SpinCompleted(num)
-                  case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(2)
-                  case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(3)
-                  case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(4)
-                  case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(5)
+                  case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(PlaceYourBets)
+                  case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(BallInRim)
+                  case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(NoMoreBets)
+                  case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(BallDetected)
                 }.unicast._2.foreach(scene.onNext)
             case DeviceDetached(port) =>
               println(s"$port detached")
@@ -93,10 +93,10 @@ object BillboardApp extends App {
             .debug("protocol")
             .collect {
               case Win(num) => Event.SpinCompleted(num)
-              case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(2)
-              case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(3)
-              case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(4)
-              case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(5)
+              case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(PlaceYourBets)
+              case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(BallInRim)
+              case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(NoMoreBets)
+              case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(BallDetected)
             }.foreach(scene.onNext)
 
 
