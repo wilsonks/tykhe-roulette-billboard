@@ -115,18 +115,22 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-
     val duration = 3.seconds
     val winEntity = scene.root / "win.number"
     val winEffect = winEntity.tint.fade(0f, Interpolation.bounceOut, duration).doOnFinish(_ => Task.evalOnce(winEntity.tint.color.a = 1f))
+    var count = 0
 
     //Reader(scene) Main Loop
     reader.foreach  {
       case e: StatusChanged  => {
         e.value  match {
           case PlaceYourBets => {
-            (scene.root / "bg").tint.color.sub(Color.valueOf("00040400"))
+//              (scene.root / "bg").tint.color.sub(Color.valueOf("03040200"))
+              (scene.root / "bg").tint.color.sub(Color.valueOf("02030201"))
             state() = state.now.transition(e)
           }
 
           case BallInRim => {
-            (scene.root / "bg").tint.color.sub(Color.valueOf("00040400"))
+//            (scene.root / "bg").tint.color.sub(Color.valueOf("03040200"))
+            (scene.root / "bg").tint.color.sub(Color.valueOf("02030201"))
+//            (scene.root / "bg").tint.color.sub(Color.valueOf("13151100"))
             state() = state.now.transition(e)
           }
 
@@ -207,7 +211,7 @@ class BillboardSceneRB(seed: State) extends Scene[Event, State]("casino-supreme-
         case BallDetected => {
           enableEntity(scene.root / "p1")
           enableEntity(scene.root / "win.number")
-          (scene.root / "bg").tint.color.add(Color.valueOf("00ffff00"))
+          (scene.root / "bg").tint.color.add(Color.valueOf("ffffffff"))
         }
         case _ =>
       }
