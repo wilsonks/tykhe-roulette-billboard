@@ -1,0 +1,184 @@
+
+pack.png
+size: 2048,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+BlackBg
+  rotate: false
+  xy: 2, 5
+  size: 172, 113
+  split: 21, 21, 21, 21
+  orig: 172, 113
+  offset: 0, 0
+  index: -1
+HotColdButton
+  rotate: false
+  xy: 627, 12
+  size: 96, 106
+  orig: 96, 106
+  offset: 0, 0
+  index: -1
+LiveRoulette
+  rotate: false
+  xy: 176, 76
+  size: 449, 42
+  orig: 449, 42
+  offset: 0, 0
+  index: -1
+PercentageBar
+  rotate: false
+  xy: 835, 12
+  size: 86, 106
+  split: 0, 0, 9, 8
+  orig: 86, 106
+  offset: 0, 0
+  index: -1
+black-bg
+  rotate: false
+  xy: 1084, 768
+  size: 762, 554
+  orig: 762, 554
+  offset: 0, 0
+  index: -1
+gold coin
+  rotate: false
+  xy: 176, 30
+  size: 44, 44
+  orig: 44, 44
+  offset: 0, 0
+  index: -1
+green
+  rotate: false
+  xy: 2, 120
+  size: 1080, 1920
+  orig: 1080, 1920
+  offset: 0, 0
+  index: -1
+logo
+  rotate: false
+  xy: 1516, 2
+  size: 430, 430
+  orig: 430, 430
+  offset: 0, 0
+  index: -1
+red-paper
+  rotate: false
+  xy: 1084, 1324
+  size: 960, 716
+  split: 320, 320, 238, 239
+  pad: 0, 0, 0, 0
+  orig: 960, 716
+  offset: 0, 0
+  index: -1
+right1
+  rotate: false
+  xy: 1084, 434
+  size: 762, 332
+  orig: 762, 332
+  offset: 0, 0
+  index: -1
+smallHistory
+  rotate: false
+  xy: 725, 27
+  size: 108, 91
+  orig: 108, 91
+  offset: 0, 0
+  index: -1
+wheel
+  rotate: false
+  xy: 1084, 2
+  size: 430, 430
+  orig: 430, 430
+  offset: 0, 0
+  index: -1
+
+pack2.png
+size: 2048,2048
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+BlackBig
+  rotate: false
+  xy: 1380, 1571
+  size: 349, 351
+  orig: 349, 351
+  offset: 0, 0
+  index: -1
+RedBig
+  rotate: false
+  xy: 1380, 865
+  size: 349, 351
+  orig: 349, 351
+  offset: 0, 0
+  index: -1
+ball
+  rotate: false
+  xy: 1380, 518
+  size: 343, 345
+  orig: 343, 345
+  offset: 0, 0
+  index: -1
+bg
+  rotate: false
+  xy: 1337, 2
+  size: 41, 1920
+  split: 0, 0, 0, 0
+  orig: 41, 1920
+  offset: 0, 0
+  index: -1
+bigHistory
+  rotate: false
+  xy: 1731, 1728
+  size: 212, 194
+  orig: 212, 194
+  offset: 0, 0
+  index: -1
+casino.gold
+  rotate: false
+  xy: 2, 2
+  size: 1080, 1920
+  orig: 1080, 1920
+  offset: 0, 0
+  index: -1
+greenBig
+  rotate: false
+  xy: 1380, 1218
+  size: 349, 351
+  orig: 349, 351
+  offset: 0, 0
+  index: -1
+min-max
+  rotate: false
+  xy: 1380, 393
+  size: 435, 123
+  orig: 435, 123
+  offset: 0, 0
+  index: -1
+right3
+  rotate: false
+  xy: 1380, 268
+  size: 219, 123
+  orig: 219, 123
+  offset: 0, 0
+  index: -1
+side
+  rotate: false
+  xy: 1084, 47
+  size: 251, 1875
+  orig: 251, 1875
+  offset: 0, 0
+  index: -1
+
+pack3.png
+size: 1024,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+right2
+  rotate: false
+  xy: 2, 2
+  size: 762, 238
+  orig: 762, 238
+  offset: 0, 0
+  index: -1
