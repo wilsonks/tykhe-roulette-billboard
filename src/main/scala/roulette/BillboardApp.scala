@@ -89,15 +89,16 @@ object BillboardApp extends App {
               println(s"$port detached")
           }
 
-          testDevice1.decode(Input.codec)
-            .debug("protocol")
-            .collect {
-              case Win(num) => Event.SpinCompleted(num)
-              case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(PlaceYourBets)
-              case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(BallInRim)
-              case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(NoMoreBets)
-              case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(BallDetected)
-            }.foreach(scene.onNext)
+          //Only For Tests
+//          testDevice.decode(Input.codec)
+//            .debug("protocol")
+//            .collect {
+//              case Win(num) => Event.SpinCompleted(num)
+//              case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(PlaceYourBets)
+//              case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(BallInRim)
+//              case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(NoMoreBets)
+//              case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(BallDetected)
+//            }.foreach(scene.onNext)
 
 
           // UI loop
