@@ -21,9 +21,10 @@ lazy val billboard = project
 lazy val library = Map(
   "pureconfig" -> "com.github.pureconfig" %% "pureconfig" % versions("pureconfig"),
   "better-files" -> "com.github.pathikrit" % "better-files_2.12" % "3.2.0",
+  "gdx-box2d" -> "com.badlogicgames.gdx" % "gdx-box2d" % versions("gdx"),
   "device-usb" -> "io.device" %% "device-usb" % versions("device"),
   "display-desktop" -> "io.display" %% "display-desktop" % versions("display"),
-  "display-ecs" -> "io.display" %% "display-ecs" % versions("display"),
+  "display-ecs" -> ("io.display" %% "display-ecs" % versions("display")).exclude("com.badlogicgames.box2dlights", "box2dlights"),
   "gdx-platform" -> ("com.badlogicgames.gdx" % "gdx-platform" % versions("gdx")),
   "gdx-freetype-platform" -> ("com.badlogicgames.gdx" % "gdx-freetype-platform" % versions("gdx")),
   "gdx-box2d-platform" -> ("com.badlogicgames.gdx" % "gdx-box2d-platform" % versions("gdx")),
@@ -34,6 +35,7 @@ lazy val library = Map(
   "libusb4java" -> ("org.usb4java" % "libusb4java" % versions("usb4java")))
 
 lazy val versions = Map(
+  "box2dlights" -> "1.5",
   "pureconfig" -> "0.7.2",
   "device" -> "0.6.6",
   "display" -> "0.8.1",
@@ -111,7 +113,7 @@ lazy val sharedSettings = Seq(
 
 lazy val publishSettings = Seq(
   publishMavenStyle := true,
-  publishTo := Option("Tykhe Artifactory" at "http://repo-desktop:8081/artifactory/" + (
+  publishTo := Option("Tykhe Artifactory" at "https://repo-desktop:8081/artifactory/" + (
     if (isSnapshot.value) s"tykhe-snapshots;build.timestamp=${new java.util.Date().getTime}" else "tykhe-releases")))
 
 lazy val noPublish = Seq(

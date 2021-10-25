@@ -90,15 +90,15 @@ object BillboardApp extends App {
           }
 
           //Only For Tests
-//          testDevice.decode(Input.codec)
-//            .debug("protocol")
-//            .collect {
-//              case Win(num) => Event.SpinCompleted(num)
-//              case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(PlaceYourBets)
-//              case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(BallInRim)
-//              case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(NoMoreBets)
-//              case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(BallDetected)
-//            }.foreach(scene.onNext)
+          testDevice.decode(Input.codec)
+            .debug("protocol")
+            .collect {
+              case Win(num) => Event.SpinCompleted(num)
+              case Status(PlaceYourBets,x,num,y,z,a) => Event.StatusChanged(PlaceYourBets)
+              case Status(BallInRim,x,num,y,z,a) => Event.StatusChanged(BallInRim)
+              case Status(NoMoreBets,x,num,y,z,a) => Event.StatusChanged(NoMoreBets)
+              case Status(BallDetected,x,num,y,z,a) => Event.StatusChanged(BallDetected)
+            }.foreach(event => scene.onNext(event))
 
 
           // UI loop
